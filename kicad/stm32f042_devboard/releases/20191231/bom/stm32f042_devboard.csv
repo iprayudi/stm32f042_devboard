@@ -1,0 +1,15 @@
+Comment,Designator,Footprint,LCSC
+4.7u,"C1,C4,C8",Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,C1779
+1u,"C2,C3,C10",Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,C28323
+100n,"C5,C6,C7",Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,C49678
+10n,C9,Capacitor_SMD:C_0805_2012Metric_Pad1.15x1.40mm_HandSolder,C1710
+LED,"D1,D2",LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder,
+USB_B_Micro,J1,Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal,
+Conn_01x04,J2,Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical,
+Conn_01x09,J3,Connector_PinHeader_2.54mm:PinHeader_1x09_P2.54mm_Vertical,
+Conn_01x03,"J4,J5",Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical,
+Conn_01x03,J6,Jumper:SolderJumper-3_P1.3mm_Bridged12_RoundedPad1.0x1.5mm,
+470,"R1,R2",Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder,C17710
+SW_Push,SW1,Button_Switch_SMD:SW_Push_1P1T_NO_CK_KSC6xxJ,
+STM32F042F6Px,U1,Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm,C81000
+AMS1117-3.3,U2,Package_TO_SOT_SMD:SOT-223-3_TabPin2,C6186

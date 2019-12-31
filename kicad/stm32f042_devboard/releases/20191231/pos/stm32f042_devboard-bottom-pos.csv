@@ -1,0 +1,12 @@
+Ref,Val,Package,PosX,PosY,Rot,Side
+"C1","4.7u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",133.359000,-92.964000,180.000000,bottom
+"C2","1u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",133.359000,-95.504000,180.000000,bottom
+"C3","1u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",133.096000,-84.192000,90.000000,bottom
+"C4","4.7u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",135.382000,-84.192000,90.000000,bottom
+"C6","100n","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",147.574000,-87.122000,0.000000,bottom
+"C7","100n","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",147.574000,-89.281000,0.000000,bottom
+"C8","4.7u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",147.583000,-84.963000,0.000000,bottom
+"C9","10n","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",143.002000,-81.906000,90.000000,bottom
+"C10","1u","C_0805_2012Metric_Pad1.15x1.40mm_HandSolder",145.161000,-81.915000,90.000000,bottom
+"J1","USB_B_Micro","USB_Micro-B_Amphenol_10103594-0001LF_Horizontal",149.606000,-96.012000,270.000000,bottom
+"U2","AMS1117-3.3","SOT-223-3_TabPin2",140.208000,-89.916000,90.000000,bottom
