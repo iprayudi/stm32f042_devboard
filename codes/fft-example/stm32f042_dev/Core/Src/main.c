@@ -84,9 +84,6 @@ void test_fft(void)
 	__NOP();
 }
 
-int32_t test;
-
-
 /* USER CODE END 0 */
 
 /**
