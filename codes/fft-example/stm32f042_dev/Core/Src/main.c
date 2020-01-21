@@ -28,7 +28,7 @@
 #include "stdio.h"
 
 #include "Adafruit_ZeroFFT.h"
-#include "ssd1306.h"
+//#include "ssd1306.h"
 //#include "ssd1306_tests.h"
 
 /* USER CODE END Includes */
@@ -40,8 +40,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ADC_BUFFER_SIZE 512//1024
+#define ADC_BUFFER_SIZE 512
 #define FFT_BIN_SIZE 512
+#define FFT_BIN_SIZE_HALF 256
+#define SAMPLING_FREQ 1000000
+#define FFT_UNIT_FREQ 1953.125f // equation: SAMPLING_FREQ / FFT_BIN_SIZE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,10 +60,11 @@ UART_HandleTypeDef huart2;
 //PCD_HandleTypeDef hpcd_USB_FS;
 
 /* USER CODE BEGIN PV */
-//uint16_t adcBuffer[ADC_BUFFER_SIZE];
-//double fft_max_val;
-//double fft_max_freq;
-extern q15_t signal[]; // test signal
+uint16_t adcBuffer[ADC_BUFFER_SIZE];
+uint16_t fft_max_index;
+uint16_t fft_max_val;
+float fft_max_freq;
+char dispBuffer[16];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,12 +82,6 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void test_fft(void)
-{
-	ZeroFFT(signal, 512);
-	__NOP();
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -93,7 +91,7 @@ void test_fft(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-//	char dispBuffer[8];
+
   /* USER CODE END 1 */
   
 
@@ -128,42 +126,15 @@ int main(void)
 	  Error_Handler();
   }
 
-//  test_fft();
-
-
-//  FFT(data, DATA_LEN);
-//  for (int i=0;i<DATA_LEN/2;i++) {
-//
-//	  if (i==0) {
-//		  fft_max_val = data_magnitude[0];
-//		  fft_max_freq=0;
-//	  }
-//
-//	  data_magnitude[i] = abs(data[i].real);
-//	  if (data_magnitude[i]>fft_max_val){
-//		  fft_max_val=data_magnitude[i];
-//		  fft_max_freq=i*(10000/64);
-//	  }
-//  }
-
-//  fft_max_val = data_magnitude[0];
-//  fft_max_freq=0;
-//  for (int i=1;i<DATA_LEN/2;i++){
-//	  if (data_magnitude[i]>fft_max_val){
-//		  fft_max_val=data_magnitude[i];
-//		  fft_max_freq=i*(10000/64);
-//	  }
-//  }
-
-
   /*
    * Reset display
    */
 //  ssd1306_Fill(Black);
 //  ssd1306_UpdateScreen();
+//
 //  ssd1306_TestAll();
 //  ssd1306_SetCursor(2, 5);
-//  ssd1306_WriteString("Max. Freq:", Font_11x18, White);
+//  ssd1306_WriteString("Freq:", Font_11x18, White);
 //  ssd1306_UpdateScreen();
 //  ssd1306_SetCursor(75, 40);
 //  ssd1306_WriteString("Hz", Font_11x18, White);
@@ -180,7 +151,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//  HAL_ADC_Start_DMA(&hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
+  HAL_ADC_Start_DMA(&hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
 
   while (1)
   {
@@ -449,15 +420,27 @@ static void MX_GPIO_Init(void)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 //	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-//	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
 
 	/*
 	 * FFT calculation
 	 */
+	ZeroFFT((q15_t *)adcBuffer, FFT_BIN_SIZE);
+
+	// find signal frequency
+	fft_max_val = 0;
+	for (int i=2;i<FFT_BIN_SIZE_HALF;i++) { // loop start from 2 to avoid DC component
+		if (adcBuffer[i] > fft_max_val) {
+			fft_max_index = i;
+			fft_max_val = adcBuffer[i];
+		}
+	}
+	fft_max_freq = fft_max_index * FFT_UNIT_FREQ;
 
 	/* -- end of FFT calculation -- */
 
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+	HAL_ADC_Start_DMA(hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
 }
 /* USER CODE END 4 */
 

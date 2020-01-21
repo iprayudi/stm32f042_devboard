@@ -32,9 +32,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_uart_ex.h \
  C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/Adafruit_ZeroFFT.h \
  C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/arm_common_tables.h \
- C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/Adafruit_ZeroFFT.h \
- C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/SSD1306/ssd1306.h \
- C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/SSD1306/ssd1306_fonts.h
+ C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/Adafruit_ZeroFFT.h
 
 ../Core/Inc/main.h:
 
@@ -105,7 +103,3 @@ C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042
 C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/arm_common_tables.h:
 
 C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/ADAFRUIT_ZEROFFT/Adafruit_ZeroFFT.h:
-
-C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/SSD1306/ssd1306.h:
-
-C:/Users/imprayudi/Documents/workspace/stm32f042_devboard/codes/cdm324/stm32f042_dev/Drivers/SSD1306/ssd1306_fonts.h:

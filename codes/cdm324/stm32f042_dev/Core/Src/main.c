@@ -27,146 +27,10 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#include "simpleDSP_fft.h"
+#include "Adafruit_ZeroFFT.h"
+//#include "ssd1306.h"
+//#include "ssd1306_tests.h"
 
-#include "ssd1306.h"
-#include "ssd1306_tests.h"
-
-#define DATA_LEN 64
-
-double data_magnitude[DATA_LEN];
-
-COMPLEX data[DATA_LEN] =
-{
-        450.527388478791,
-        0.0,
-        -101.597194769693,
-        0.0,
-        1031.37368065794,
-        0.0,
-        -613.160606150798,
-        0.0,
-        -1618.03398874990,
-        0.0,
-        -115.808021270615,
-        0.0,
-        -866.985966358939,
-        0.0,
-        -1567.20047563694,
-        0.0,
-        541.587312835687,
-        0.0,
-        618.033988749895,
-        0.0,
-        -263.146073893067,
-        0.0,
-        1504.40995610763,
-        0.0,
-        1504.40995610763,
-        0.0,
-        -263.146073893067,
-        0.0,
-        618.033988749894,
-        0.0,
-        541.587312835686,
-        0.0,
-        -1567.20047563694,
-        0.0,
-        -866.985966358938,
-        0.0,
-        -115.808021270616,
-        0.0,
-        -1618.03398874989,
-        0.0,
-        -613.160606150796,
-        0.0,
-        1031.37368065794,
-        0.0,
-        -101.597194769693,
-        0.0,
-        450.527388478786,
-        0.0,
-        2000,
-        0.0,
-        450.527388478790,
-        0.0,
-        -101.597194769691,
-        0.0,
-        1031.37368065794,
-        0.0,
-        -613.160606150791,
-        0.0,
-        -1618.03398874990,
-        0.0,
-        -115.808021270614,
-        0.0,
-        -866.985966358941,
-        0.0,
-        -1567.20047563694,
-        0.0,
-        541.587312835695,
-        0.0,
-        618.033988749887,
-        0.0,
-        -263.146073893066,
-        0.0,
-        1504.40995610763,
-        0.0,
-        1504.40995610762,
-        0.0,
-        -263.146073893069,
-        0.0,
-        618.033988749893,
-        0.0,
-        541.587312835687,
-        0.0,
-        -1567.20047563694,
-        0.0,
-        -866.985966358946,
-        0.0,
-        -115.808021270611,
-        0.0,
-        -1618.03398874989,
-        0.0,
-        -613.160606150798,
-        0.0,
-        1031.37368065794,
-        0.0,
-        -101.597194769688,
-        0.0,
-        450.527388478784,
-        0.0,
-        2000,
-        0.0,
-        450.527388478792,
-        0.0,
-        -101.597194769692,
-        0.0,
-        1031.37368065794,
-        0.0,
-        -613.160606150806,
-        0.0,
-        -1618.03398874989,
-        0.0,
-        -115.808021270608,
-        0.0,
-        -866.985966358952,
-        0.0,
-        -1567.20047563695,
-        0.0,
-        541.587312835680,
-        0.0,
-        618.033988749898,
-        0.0,
-        -263.146073893067,
-        0.0,
-        1504.40995610763,
-        0.0,
-        1504.40995610762,
-        0.0,
-        -263.146073893068,
-        0.0
-};
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -176,7 +40,11 @@ COMPLEX data[DATA_LEN] =
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ADC_BUFFER_SIZE 64
+#define ADC_BUFFER_SIZE 512
+#define FFT_BIN_SIZE 512
+#define FFT_BIN_SIZE_HALF 256
+#define SAMPLING_FREQ 1000000
+#define FFT_UNIT_FREQ 1953.125f // equation: SAMPLING_FREQ / FFT_BIN_SIZE
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -187,16 +55,16 @@ COMPLEX data[DATA_LEN] =
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
 DMA_HandleTypeDef hdma_adc;
-
 I2C_HandleTypeDef hi2c1;
-
 UART_HandleTypeDef huart2;
-
-PCD_HandleTypeDef hpcd_USB_FS;
+//PCD_HandleTypeDef hpcd_USB_FS;
 
 /* USER CODE BEGIN PV */
 uint16_t adcBuffer[ADC_BUFFER_SIZE];
-
+uint16_t fft_max_index;
+uint16_t fft_max_val;
+float fft_max_freq;
+char dispBuffer[16];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -205,7 +73,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_USB_PCD_Init(void);
+//static void MX_USB_PCD_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -223,9 +91,7 @@ static void MX_I2C1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	char dispBuffer[8];
-	double fft_max_val;
-	double fft_max_freq;
+
   /* USER CODE END 1 */
   
 
@@ -250,67 +116,49 @@ int main(void)
   MX_DMA_Init();
   MX_ADC_Init();
   MX_USART2_UART_Init();
-  MX_USB_PCD_Init();
+//  MX_USB_PCD_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_ADC_Start_DMA(&hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
 
-  FFT(data, DATA_LEN);
-  for (int i=0;i<DATA_LEN;i++) {
-	  data_magnitude[i] = abs(data[i].real);
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+
+  if (HAL_ADCEx_Calibration_Start(&hadc) != HAL_OK){
+	  Error_Handler();
   }
-
-  fft_max_val = data_magnitude[0];
-  fft_max_freq=0;
-  for (int i=1;i<DATA_LEN/2;i++){
-	  if (data_magnitude[i]>fft_max_val){
-		  fft_max_val=data_magnitude[i];
-		  fft_max_freq=i*(10000/64);
-	  }
-  }
-
-
-
 
   /*
    * Reset display
    */
-  ssd1306_Fill(Black);
-  ssd1306_UpdateScreen();
-
+//  ssd1306_Fill(Black);
+//  ssd1306_UpdateScreen();
+//
 //  ssd1306_TestAll();
-
-  ssd1306_SetCursor(2, 5);
-  ssd1306_WriteString("Max. Freq:", Font_11x18, White);
-  ssd1306_UpdateScreen();
-  ssd1306_SetCursor(75, 40);
-  ssd1306_WriteString("Hz", Font_11x18, White);
-  ssd1306_UpdateScreen();
-
-  sprintf(dispBuffer, "%d", (int) fft_max_freq);
-  ssd1306_SetCursor(10, 40);
-  ssd1306_WriteString(dispBuffer, Font_11x18, White);
-  ssd1306_UpdateScreen();
-
+//  ssd1306_SetCursor(2, 5);
+//  ssd1306_WriteString("Freq:", Font_11x18, White);
+//  ssd1306_UpdateScreen();
+//  ssd1306_SetCursor(75, 40);
+//  ssd1306_WriteString("Hz", Font_11x18, White);
+//  ssd1306_UpdateScreen();
+//
+//  sprintf(dispBuffer, "%d", (int) fft_max_freq);
+//  ssd1306_SetCursor(10, 40);
+//  ssd1306_WriteString(dispBuffer, Font_11x18, White);
+//  ssd1306_UpdateScreen();
   /* USER CODE END 2 */
-
-
+ 
+ 
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  HAL_ADC_Start_DMA(&hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  i++;
-//	  sprintf(dispBuffer, "%d", i);
-//	  ssd1306_SetCursor(10, 40);
-//	  ssd1306_WriteString(dispBuffer, Font_11x18, White);
-//	  ssd1306_UpdateScreen();
 
-	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-	  FFT(data, DATA_LEN); // 5.8ms
   }
   /* USER CODE END 3 */
 }
@@ -392,7 +240,7 @@ static void MX_ADC_Init(void)
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc.Init.DMAContinuousRequests = ENABLE;
+  hadc.Init.DMAContinuousRequests = DISABLE;
   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
@@ -499,32 +347,32 @@ static void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USB_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_Init 0 */
-
-  /* USER CODE END USB_Init 0 */
-
-  /* USER CODE BEGIN USB_Init 1 */
-
-  /* USER CODE END USB_Init 1 */
-  hpcd_USB_FS.Instance = USB;
-  hpcd_USB_FS.Init.dev_endpoints = 8;
-  hpcd_USB_FS.Init.speed = PCD_SPEED_FULL;
-  hpcd_USB_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-  hpcd_USB_FS.Init.low_power_enable = DISABLE;
-  hpcd_USB_FS.Init.lpm_enable = DISABLE;
-  hpcd_USB_FS.Init.battery_charging_enable = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_Init 2 */
-
-  /* USER CODE END USB_Init 2 */
-
-}
+//static void MX_USB_PCD_Init(void)
+//{
+//
+//  /* USER CODE BEGIN USB_Init 0 */
+//
+//  /* USER CODE END USB_Init 0 */
+//
+//  /* USER CODE BEGIN USB_Init 1 */
+//
+//  /* USER CODE END USB_Init 1 */
+//  hpcd_USB_FS.Instance = USB;
+//  hpcd_USB_FS.Init.dev_endpoints = 8;
+//  hpcd_USB_FS.Init.speed = PCD_SPEED_FULL;
+//  hpcd_USB_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
+//  hpcd_USB_FS.Init.low_power_enable = DISABLE;
+//  hpcd_USB_FS.Init.lpm_enable = DISABLE;
+//  hpcd_USB_FS.Init.battery_charging_enable = DISABLE;
+//  if (HAL_PCD_Init(&hpcd_USB_FS) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+//  /* USER CODE BEGIN USB_Init 2 */
+//
+//  /* USER CODE END USB_Init 2 */
+//
+//}
 
 /** 
   * Enable DMA controller clock
@@ -571,7 +419,28 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+//	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, SET);
+
+	/*
+	 * FFT calculation
+	 */
+	ZeroFFT((q15_t *)adcBuffer, FFT_BIN_SIZE);
+
+	// find signal frequency
+	fft_max_val = 0;
+	for (int i=2;i<FFT_BIN_SIZE_HALF;i++) { // loop start from 2 to avoid DC component
+		if (adcBuffer[i] > fft_max_val) {
+			fft_max_index = i;
+			fft_max_val = adcBuffer[i];
+		}
+	}
+	fft_max_freq = fft_max_index * FFT_UNIT_FREQ;
+
+	/* -- end of FFT calculation -- */
+
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
+	HAL_ADC_Start_DMA(hadc, (uint32_t *)adcBuffer, ADC_BUFFER_SIZE);
 }
 /* USER CODE END 4 */
 

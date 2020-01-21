@@ -19,7 +19,7 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
-Drivers/SIMPLE_DSP \
+Drivers/ADAFRUIT_ZEROFFT \
 Drivers/SSD1306 \
 Drivers/STM32F0xx_HAL_Driver/Src \
 

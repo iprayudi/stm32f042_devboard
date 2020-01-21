@@ -10,7 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include Drivers/STM32F0xx_HAL_Driver/Src/subdir.mk
 -include Drivers/SSD1306/subdir.mk
--include Drivers/SIMPLE_DSP/subdir.mk
+-include Drivers/ADAFRUIT_ZEROFFT/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include subdir.mk
@@ -42,8 +42,8 @@ stm32f042_dev.bin \
 all: stm32f042_dev.elf secondary-outputs
 
 # Tool invocations
-stm32f042_dev.elf: $(OBJS) $(USER_OBJS) C:\Users\Iman\Documents\workspace\STM32CubeIDE\workspace_1.1.0\stm32f042_dev\STM32F042F6PX_FLASH.ld
-	arm-none-eabi-gcc -o "stm32f042_dev.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\Iman\Documents\workspace\STM32CubeIDE\workspace_1.1.0\stm32f042_dev\STM32F042F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f042_dev.map" -Wl,--gc-sections -static -z muldefs --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+stm32f042_dev.elf: $(OBJS) $(USER_OBJS) C:\Users\imprayudi\Documents\workspace\stm32f042_devboard\codes\cdm324\stm32f042_dev\STM32F042F6PX_FLASH.ld
+	arm-none-eabi-gcc -o "stm32f042_dev.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\imprayudi\Documents\workspace\stm32f042_devboard\codes\cdm324\stm32f042_dev\STM32F042F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f042_dev.map" -Wl,--gc-sections -static -z muldefs --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
