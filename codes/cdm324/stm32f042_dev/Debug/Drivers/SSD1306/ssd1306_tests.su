@@ -1,4 +1,0 @@
-ssd1306_tests.c:8:6:ssd1306_TestBorder	24	static
-ssd1306_tests.c:37:6:ssd1306_TestFonts	8	static
-ssd1306_tests.c:50:6:ssd1306_TestFPS	112	static
-ssd1306_tests.c:86:6:ssd1306_TestAll	8	static

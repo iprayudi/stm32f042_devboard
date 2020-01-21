@@ -1,3 +1,0 @@
-fftutil.c:22:6:arm_bitreversal_q15	48	static
-fftutil.c:70:6:arm_radix2_butterfly_q15	72	static
-fftutil.c:197:5:ZeroFFT	32	static
